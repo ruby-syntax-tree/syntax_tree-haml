@@ -1,6 +1,6 @@
 # SyntaxTree::Haml
 
-[![Build Status](https://github.com/ruby-syntax-tree/syntax_tree-haml/workflows/Main/badge.svg)](https://github.com/ruby-syntax-tree/syntax_tree-haml/actions)
+[![Build Status](https://github.com/ruby-syntax-tree/syntax_tree-haml/actions/workflows/main.yml/badge.svg)](https://github.com/ruby-syntax-tree/syntax_tree-haml/actions/workflows/main.yml)
 [![Gem Version](https://img.shields.io/gem/v/syntax_tree-haml.svg)](https://rubygems.org/gems/syntax_tree-haml)
 
 [Syntax Tree](https://github.com/ruby-syntax-tree/syntax_tree) support for the [Haml template language](https://haml.info/).
