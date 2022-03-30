@@ -233,8 +233,14 @@ class SyntaxTree < Ripper
       def pretty_print(q)
         q.group(2, "(tag", ")") do
           q.breakable
-          q.text("attributes=")
-          q.pp(node.value[:attributes])
+          q.text("name=")
+          q.pp(node.value[:name])
+
+          if node.value[:attributes].any?
+            q.breakable
+            q.text("attributes=")
+            q.pp(node.value[:attributes])
+          end
 
           if node.value[:dynamic_attributes].new
             q.breakable

@@ -36,7 +36,7 @@ From the CLI:
 
 ```sh
 $ stree ast template.haml
-(root children=[(tag attributes={} value="Hello, world!")])
+(root children=[(tag name="span" value="Hello, world!")])
 ```
 
 or
