@@ -76,7 +76,6 @@ module SyntaxTree
     end
   end
 
-  # If we're in the context of the CLI, then register our module as a handler
-  # for the .haml file type.
-  CLI.register_handler(".haml", Haml) if const_defined?(:CLI)
+  # Register our module as a handler for the .haml file type.
+  register_handler(".haml", Haml)
 end
