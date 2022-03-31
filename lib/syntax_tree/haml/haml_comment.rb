@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyntaxTree < Ripper
+module SyntaxTree
   module Haml
     # https://haml.info/docs/yardoc/file.REFERENCE.html#haml-comments--
     class HamlComment

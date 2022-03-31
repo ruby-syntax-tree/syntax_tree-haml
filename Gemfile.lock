@@ -3,7 +3,7 @@ PATH
   specs:
     syntax_tree-haml (0.1.0)
       haml (>= 5.2)
-      syntax_tree
+      syntax_tree (>= 2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -20,13 +20,12 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    syntax_tree (1.2.0)
+    syntax_tree (2.0.0)
     temple (0.8.2)
     tilt (2.0.10)
 
 PLATFORMS
   x86_64-darwin-21
-  x86_64-linux
 
 DEPENDENCIES
   bundler
@@ -36,4 +35,4 @@ DEPENDENCIES
   syntax_tree-haml!
 
 BUNDLED WITH
-   2.3.6
+   2.4.0.dev

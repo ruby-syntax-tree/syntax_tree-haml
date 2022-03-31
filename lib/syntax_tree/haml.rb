@@ -41,7 +41,7 @@ class Haml::Parser::ParseNode
   end
 end
 
-class SyntaxTree < Ripper
+module SyntaxTree
   module Haml
     def self.parse(source)
       ::Haml::Parser.new({}).call(source)
@@ -53,6 +53,10 @@ class SyntaxTree < Ripper
 
       formatter.flush
       formatter.output.join
+    end
+
+    def self.read(filepath)
+      File.read(filepath)
     end
 
     def self.with_children(node, q)
@@ -71,4 +75,8 @@ class SyntaxTree < Ripper
       end
     end
   end
+
+  # If we're in the context of the CLI, then register our module as a handler
+  # for the .haml file type.
+  CLI.register_handler(".haml", Haml) if const_defined?(:CLI)
 end

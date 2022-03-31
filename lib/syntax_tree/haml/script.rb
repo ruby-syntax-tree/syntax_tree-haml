@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyntaxTree < Ripper
+module SyntaxTree
   module Haml
     # https://haml.info/docs/yardoc/file.REFERENCE.html#inserting_ruby
     class Script

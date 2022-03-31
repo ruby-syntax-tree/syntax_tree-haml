@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SyntaxTree < Ripper
+module SyntaxTree
   module Haml
     class Tag
       LiteralHashValue = Struct.new(:value)
