@@ -35,21 +35,21 @@ puts SyntaxTree::Haml.format(source) # format the AST
 From the CLI:
 
 ```sh
-$ stree ast template.haml
+$ stree ast --plugins=haml template.haml
 (root children=[(tag name="span" value="Hello, world!")])
 ```
 
 or
 
 ```sh
-$ stree format template.haml
+$ stree format --plugins=haml template.haml
 %span Hello, world!
 ```
 
 or
 
 ```sh
-$ stree write template.haml
+$ stree write --plugins=haml template.haml
 template.haml 1ms
 ```
 

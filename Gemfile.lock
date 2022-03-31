@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    syntax_tree-haml (0.1.0)
+    syntax_tree-haml (1.0.0)
       haml (>= 5.2)
       syntax_tree (>= 2.0)
 
@@ -26,6 +26,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   bundler
@@ -35,4 +36,4 @@ DEPENDENCIES
   syntax_tree-haml!
 
 BUNDLED WITH
-   2.4.0.dev
+   2.3.6
