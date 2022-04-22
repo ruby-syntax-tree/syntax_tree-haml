@@ -48,9 +48,14 @@ module SyntaxTree
       def continuation?(child)
         return false if child.type != :silent_script
 
-        [node.value[:keyword], child.value[:keyword]] in
-          ["case", "in" | "when" | "else"] |
-          ["if" | "unless", "elsif" | "else"]
+        case [node.value[:keyword], child.value[:keyword]]
+        in ["case", "in" | "when" | "else"]
+          true
+        in ["if" | "unless", "elsif" | "else"]
+          true
+        else
+          false
+        end
       end
     end
   end
