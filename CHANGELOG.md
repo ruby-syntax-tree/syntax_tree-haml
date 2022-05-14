@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.2.0] - 2022-05-13
+
+### Added
+
+- An optional `maxwidth` second argument to `SyntaxTree::Haml.format`.
+
 ## [1.1.0] - 2022-04-22
 
 ### Added
@@ -30,7 +36,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v0.1.0...v1.0.0
