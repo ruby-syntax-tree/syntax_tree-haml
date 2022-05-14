@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "haml"
+require "prettier_print"
 require "syntax_tree"
 
 require "syntax_tree/haml/comment"
@@ -47,12 +48,8 @@ module SyntaxTree
       ::Haml::Parser.new({}).call(source)
     end
 
-    def self.format(source)
-      formatter = PP.new([])
-      parse(source).format(formatter)
-
-      formatter.flush
-      formatter.output.join
+    def self.format(source, maxwidth = 80)
+      PrettierPrint.format(+"", maxwidth) { |q| parse(source).format(q) }
     end
 
     def self.read(filepath)
