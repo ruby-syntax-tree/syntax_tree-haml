@@ -14,9 +14,9 @@ module SyntaxTree
       "strict" => "Strict",
       "xml" => "XML"
     }
-  
-    DOCTYPE_VERSIONS = ["1.1", "5"]
-  
+
+    DOCTYPE_VERSIONS = %w[1.1 5]
+
     # This is the parent class of the various visitors that we provide to access
     # the HAML syntax tree.
     class Visitor
@@ -55,15 +55,24 @@ class Haml::Parser::ParseNode
   # accept a visitor in order to walk through the tree.
   def accept(visitor)
     case type
-    in :comment then visitor.visit_comment(self)
-    in :doctype then visitor.visit_doctype(self)
-    in :filter then visitor.visit_filter(self)
-    in :haml_comment then visitor.visit_haml_comment(self)
-    in :plain then visitor.visit_plain(self)
-    in :root then visitor.visit_root(self)
-    in :script then visitor.visit_script(self)
-    in :silent_script then visitor.visit_silent_script(self)
-    in :tag then visitor.visit_tag(self)
+    in :comment
+      visitor.visit_comment(self)
+    in :doctype
+      visitor.visit_doctype(self)
+    in :filter
+      visitor.visit_filter(self)
+    in :haml_comment
+      visitor.visit_haml_comment(self)
+    in :plain
+      visitor.visit_plain(self)
+    in :root
+      visitor.visit_root(self)
+    in :script
+      visitor.visit_script(self)
+    in :silent_script
+      visitor.visit_silent_script(self)
+    in :tag
+      visitor.visit_tag(self)
     end
   end
 
