@@ -4,75 +4,74 @@ require "haml"
 require "prettier_print"
 require "syntax_tree"
 
-require "syntax_tree/haml/comment"
-require "syntax_tree/haml/doctype"
-require "syntax_tree/haml/filter"
-require "syntax_tree/haml/haml_comment"
-require "syntax_tree/haml/plain"
-require "syntax_tree/haml/root"
-require "syntax_tree/haml/script"
-require "syntax_tree/haml/silent_script"
-require "syntax_tree/haml/tag"
-
-class Haml::Parser::ParseNode
-  def format(q)
-    syntax_tree.format(q)
-  end
-
-  def pretty_print(q)
-    syntax_tree.pretty_print(q)
-  end
-
-  private
-
-  def syntax_tree
-    case type
-    when :comment then SyntaxTree::Haml::Comment.new(self)
-    when :doctype then SyntaxTree::Haml::Doctype.new(self)
-    when :filter then SyntaxTree::Haml::Filter.new(self)
-    when :haml_comment then SyntaxTree::Haml::HamlComment.new(self)
-    when :plain then SyntaxTree::Haml::Plain.new(self)
-    when :root then SyntaxTree::Haml::Root.new(self)
-    when :script then SyntaxTree::Haml::Script.new(self)
-    when :silent_script then SyntaxTree::Haml::SilentScript.new(self)
-    when :tag then SyntaxTree::Haml::Tag.new(self)
-    else
-      raise ArgumentError, "Unsupported type: #{type}"
-    end
-  end
-end
-
 module SyntaxTree
   module Haml
+    DOCTYPE_TYPES = {
+      "basic" => "Basic",
+      "frameset" => "Frameset",
+      "mobile" => "Mobile",
+      "rdfa" => "RDFa",
+      "strict" => "Strict",
+      "xml" => "XML"
+    }
+  
+    DOCTYPE_VERSIONS = ["1.1", "5"]
+  
+    # This is the parent class of the various visitors that we provide to access
+    # the HAML syntax tree.
+    class Visitor
+      def visit(node)
+        node&.accept(self)
+      end
+    end
+
+    # This is the main parser entrypoint, and just delegates to the Haml gem's
+    # parser to do the heavy lifting.
     def self.parse(source)
       ::Haml::Parser.new({}).call(source)
     end
 
+    # This is the main entrypoint for the formatter. It parses the source,
+    # builds a formatter, then pretty prints the result.
     def self.format(source, maxwidth = 80)
       PrettierPrint.format(+"", maxwidth) { |q| parse(source).format(q) }
     end
 
+    # This is a required API for syntax tree which just delegates to File.read.
     def self.read(filepath)
       File.read(filepath)
-    end
-
-    def self.with_children(node, q)
-      if node.children.empty?
-        q.group { yield }
-      else
-        q.group do
-          q.group { yield }
-          q.indent do
-            node.children.each do |child|
-              q.breakable(force: true)
-              child.format(q)
-            end
-          end
-        end
-      end
     end
   end
 
   # Register our module as a handler for the .haml file type.
   register_handler(".haml", Haml)
+end
+
+require "syntax_tree/haml/format"
+require "syntax_tree/haml/pretty_print"
+
+class Haml::Parser::ParseNode
+  # Here we're going to hook into the parse node and define a method that will
+  # accept a visitor in order to walk through the tree.
+  def accept(visitor)
+    case type
+    in :comment then visitor.visit_comment(self)
+    in :doctype then visitor.visit_doctype(self)
+    in :filter then visitor.visit_filter(self)
+    in :haml_comment then visitor.visit_haml_comment(self)
+    in :plain then visitor.visit_plain(self)
+    in :root then visitor.visit_root(self)
+    in :script then visitor.visit_script(self)
+    in :silent_script then visitor.visit_silent_script(self)
+    in :tag then visitor.visit_tag(self)
+    end
+  end
+
+  def format(q)
+    accept(SyntaxTree::Haml::Format.new(q))
+  end
+
+  def pretty_print(q)
+    accept(SyntaxTree::Haml::PrettyPrint.new(q))
+  end
 end
