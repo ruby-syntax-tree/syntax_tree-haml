@@ -245,7 +245,12 @@ module SyntaxTree
       end
 
       def self.hash_key(key)
-        key.match?(/^@|[-:]/) ? "\"#{key}\":" : "#{key}:"
+        if key.match?(/^@|[-:]/)
+          quote = SyntaxTree::Formatter::OPTIONS[:quote]
+          "#{quote}#{Quotes.normalize(key, quote)}#{quote}:"
+        else
+          "#{key}:"
+        end
       end
 
       def self.hash_value(value)
@@ -253,7 +258,8 @@ module SyntaxTree
         when LiteralHashValue
           value.value
         when String
-          "\"#{Quotes.normalize(value, "\"")}\""
+          quote = SyntaxTree::Formatter::OPTIONS[:quote]
+          "#{quote}#{Quotes.normalize(value, quote)}#{quote}"
         else
           value.to_s
         end

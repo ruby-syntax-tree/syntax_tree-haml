@@ -55,6 +55,15 @@ class TagTest < Minitest::Test
     assert_format("%div{data: { controller: \"lesson-evaluation\" }}")
   end
 
+  def test_dynamic_attributes_nested_hash_single_quotes
+    with_single_quotes do
+      assert_format(
+        "%div{data: { controller: \"lesson-evaluation\" }}",
+        "%div{data: { controller: 'lesson-evaluation' }}"
+      )
+    end
+  end
+
   def test_dynamic_attributes_integers
     assert_format("%span{foo: 1}")
   end
@@ -72,6 +81,15 @@ class TagTest < Minitest::Test
       "%section(xml:lang=\"en\" title=\"title\")",
       "%section{\"xml:lang\": \"en\", title: \"title\"}"
     )
+  end
+
+  def test_dynamic_attributes_strings_single_quotes
+    with_single_quotes do
+      assert_format(
+        "%section(xml:lang=\"en\" title=\"title\")",
+        "%section{'xml:lang': 'en', title: 'title'}"
+      )
+    end
   end
 
   def test_dynamic_attributes_with_at
@@ -123,5 +141,18 @@ class TagTest < Minitest::Test
 
   def test_interpolation_in_value
     assert_format("%p <small>hello</small>\"\#{1 + 2} little pigs\"")
+  end
+
+  private
+
+  def with_single_quotes
+    quote = SyntaxTree::Formatter::OPTIONS[:quote]
+    SyntaxTree::Formatter::OPTIONS[:quote] = "'"
+
+    begin
+      yield
+    ensure
+      SyntaxTree::Formatter::OPTIONS[:quote] = quote
+    end
   end
 end
