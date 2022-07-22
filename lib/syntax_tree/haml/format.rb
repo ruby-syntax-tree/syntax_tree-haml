@@ -123,6 +123,40 @@ module SyntaxTree
 
       LiteralHashValue = Struct.new(:value)
 
+      # When formatting a tag, there are a lot of different kinds of things that
+      # can be printed out. There's the tag name, the attributes, the content,
+      # etc. This object is responsible for housing all of those parts.
+      class PartList
+        attr_reader :node, :parts
+
+        def initialize(node)
+          @node = node
+          @parts = []
+        end
+
+        def <<(part)
+          parts << part
+        end
+
+        def empty?
+          parts.empty?
+        end
+
+        def format(q)
+          if empty? && node.value[:name] == "div"
+            # If we don't have any other parts to print and the tag is a div
+            # then we need to make sure to add that to the beginning. Otherwise
+            # it's implied by the presence of other operators.
+            q.text("%div")
+          else
+            parts.inject(0) do |align, part|
+              part.format(q, align)
+              align + part.length
+            end
+          end
+        end
+      end
+
       class PlainPart < Struct.new(:value)
         def format(q, align)
           q.text(value)
@@ -227,7 +261,7 @@ module SyntaxTree
 
       # Visit a tag node.
       def visit_tag(node)
-        parts = []
+        parts = PartList.new(node)
 
         # If we have a tag that isn't a div, then we need to print out that
         # name of that tag first. If it is a div, first we'll check if there
@@ -266,6 +300,7 @@ module SyntaxTree
           node.value[:attributes].reject do |key, _|
             key == "class" || key == "id"
           end
+
         parts << HashAttributesPart.new(static) if static.any?
 
         # If there are dynamic attributes that don't use the newer syntax, then
@@ -300,55 +335,32 @@ module SyntaxTree
 
         # If there is a value part, then we're going to print slightly
         # differently as the value goes after the tag declaration.
-        if node.value[:value]
-          return(
-            with_children(node) do
-              q.group do
-                align = 0
+        if (value = node.value[:value]) && !value.empty?
+          with_children(node) do
+            q.group { parts.format(q) }
+            q.indent do
+              # Split between the declaration of the tag and the contents of the
+              # tag.
+              q.breakable("")
 
-                parts.each do |part|
-                  part.format(q, align)
-                  align += part.length
-                end
-              end
-
-              q.indent do
-                # Split between the declaration of the tag and the contents of the
-                # tag.
-                q.breakable("")
-
-                if node.value[:parse] && node.value[:value].match?(/#[{$@]/)
-                  # There's a weird case here where if the value includes
-                  # interpolation and it's marked as { parse: true }, then we
-                  # don't actually want the = prefix, and we want to remove extra
-                  # escaping.
-                  q.if_break { q.text("") }.if_flat { q.text(" ") }
-                  q.text(node.value[:value][1...-1].gsub(/\\"/, "\""))
-                elsif node.value[:parse]
-                  q.text("= ")
-                  q.text(node.value[:value])
-                else
-                  q.if_break { q.text("") }.if_flat { q.text(" ") }
-                  q.text(node.value[:value])
-                end
+              if node.value[:parse] && value.match?(/#[{$@]/)
+                # There's a weird case here where if the value includes
+                # interpolation and it's marked as { parse: true }, then we
+                # don't actually want the = prefix, and we want to remove extra
+                # escaping.
+                q.if_break { q.text("") }.if_flat { q.text(" ") }
+                q.text(value[1...-1].gsub(/\\"/, "\""))
+              elsif node.value[:parse]
+                q.text("= ")
+                q.text(value)
+              else
+                q.if_break { q.text("") }.if_flat { q.text(" ") }
+                q.text(value)
               end
             end
-          )
-        end
-
-        # In case none of the other if statements have matched and we're
-        # printing a div, we need to explicitly add it back into the array.
-        if parts.empty? && node.value[:name] == "div"
-          parts << PlainPart.new("%div")
-        end
-
-        with_children(node) do
-          align = 0
-
-          parts.each do |part|
-            part.format(q, align)
-            align += part.length
           end
+        else
+          with_children(node) { parts.format(q) }
         end
       end
 

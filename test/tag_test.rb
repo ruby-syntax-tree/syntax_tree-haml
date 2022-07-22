@@ -3,6 +3,14 @@
 require "test_helper"
 
 class TagTest < Minitest::Test
+  def test_plain
+    assert_format("%div")
+  end
+
+  def test_value
+    assert_format("%div Hello, world!")
+  end
+
   def test_class
     assert_format("%p.foo")
   end
