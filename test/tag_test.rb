@@ -137,11 +137,9 @@ class TagTest < Minitest::Test
   end
 
   def test_interpolation_in_strings
-    with_single_quotes do
-      assert_format(<<~HAML)
-        %div{style: "background: center/cover url(\#{url_for(page.resource.file)})"}
-      HAML
-    end
+    with_single_quotes { assert_format(<<~HAML) }
+      %div{style: "background: center/cover url(\#{url_for(page.resource.file)})"}
+    HAML
   end
 
   def test_interpolation_in_value

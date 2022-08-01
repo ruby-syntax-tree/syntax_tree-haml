@@ -3,6 +3,22 @@
 module SyntaxTree
   module Haml
     class Format < Visitor
+      class Formatter < ::SyntaxTree::Formatter
+        attr_reader :literal_lines, :quote
+
+        def initialize(source, ...)
+          @literal_lines = {}
+          source
+            .lines
+            .each
+            .with_index(1) do |line, index|
+              @literal_lines[index] = line.rstrip if line.start_with?("!")
+            end
+
+          super(source, ...)
+        end
+      end
+
       attr_reader :q
 
       def initialize(q)
@@ -62,12 +78,11 @@ module SyntaxTree
         text = node.value[:text].strip
 
         if text.include?("\n")
+          separator = -> { q.breakable(force: true) }
+
           q.indent do
-            q.breakable(force: true)
-            q.seplist(
-              text.split("\n"),
-              -> { q.breakable(force: true) }
-            ) { |segment| q.text(segment) }
+            separator.call
+            q.seplist(text.split("\n"), separator) { |segment| q.text(segment) }
           end
         else
           q.text(" #{text}")
@@ -76,9 +91,13 @@ module SyntaxTree
 
       # https://haml.info/docs/yardoc/file.REFERENCE.html#plain-text
       def visit_plain(node)
-        text = node.value[:text]
-        q.text("\\") if escaped?(text)
-        q.text(text)
+        if line = q.literal_lines[node.line]
+          q.text(line)
+        else
+          text = node.value[:text]
+          q.text("\\") if escaped?(text)
+          q.text(text)
+        end
       end
 
       # Visit the root node of the AST.
@@ -92,12 +111,14 @@ module SyntaxTree
       # https://haml.info/docs/yardoc/file.REFERENCE.html#inserting_ruby
       def visit_script(node)
         with_children(node) do
-          q.text("&") if node.value[:escape_html]
-
-          node.value[:preserve] ? q.text("~") : q.text("=")
-
-          q.text(" ")
-          q.text(node.value[:text].strip)
+          if line = q.literal_lines[node.line]
+            q.text(line)
+          else
+            q.text("&") if node.value[:escape_html]
+            q.text(node.value[:preserve] ? "~" : "=")
+            q.text(" ")
+            q.text(node.value[:text].strip)
+          end
         end
       end
 
@@ -222,7 +243,7 @@ module SyntaxTree
         private
 
         def format_value(q, hash, level = 0)
-          quote = SyntaxTree::Formatter::OPTIONS[:quote]
+          quote = q.quote
 
           q.group do
             q.text("{")
@@ -244,8 +265,7 @@ module SyntaxTree
                   when LiteralHashValue
                     q.text(value.value)
                   when StringLiteral
-                    qq = Formatter.new("")
-                    qq.with_target(q.target) { value.format(qq) }
+                    value.format(q)
                   when String
                     q.text("#{quote}#{Quotes.normalize(value, quote)}#{quote}")
                   else

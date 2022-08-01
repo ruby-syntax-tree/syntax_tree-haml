@@ -18,4 +18,8 @@ class ScriptTest < Minitest::Test
   def test_preserve_escape_html
     assert_format("&~ foo")
   end
+
+  def test_unescape
+    assert_format("!= hello")
+  end
 end

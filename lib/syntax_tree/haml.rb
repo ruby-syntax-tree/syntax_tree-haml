@@ -34,7 +34,11 @@ module SyntaxTree
     # This is the main entrypoint for the formatter. It parses the source,
     # builds a formatter, then pretty prints the result.
     def self.format(source, maxwidth = 80)
-      PrettierPrint.format(+"", maxwidth) { |q| parse(source).format(q) }
+      formatter = Format::Formatter.new(source, +"", maxwidth)
+      parse(source).format(formatter)
+
+      formatter.flush
+      formatter.output
     end
 
     # This is a required API for syntax tree which just delegates to File.read.
