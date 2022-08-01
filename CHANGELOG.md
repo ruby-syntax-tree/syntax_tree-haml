@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [1.3.1] - 2022-08-01
+
+### Changed
+
+- Use Syntax Tree to handle properly quoting strings.
+
 ## [1.3.0] - 2022-07-22
 
 ### Added
@@ -48,7 +54,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.0.1...v1.1.0
