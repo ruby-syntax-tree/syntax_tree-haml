@@ -133,10 +133,15 @@ class TagTest < Minitest::Test
   end
 
   def test_quotes_in_strings
-    assert_format(
-      "%div{title: 'escape \" quotes'}",
-      "%div{title: \"escape \\\" quotes\"}"
-    )
+    assert_format("%div{title: 'escape \" quotes'}")
+  end
+
+  def test_interpolation_in_strings
+    with_single_quotes do
+      assert_format(<<~HAML)
+        %div{style: "background: center/cover url(\#{url_for(page.resource.file)})"}
+      HAML
+    end
   end
 
   def test_interpolation_in_value

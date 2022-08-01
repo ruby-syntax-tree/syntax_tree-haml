@@ -123,6 +123,8 @@ module SyntaxTree
 
       LiteralHashValue = Struct.new(:value)
 
+      StringHashValue = Struct.new(:value, :quote)
+
       # When formatting a tag, there are a lot of different kinds of things that
       # can be printed out. There's the tag name, the attributes, the content,
       # etc. This object is responsible for housing all of those parts.
@@ -220,19 +222,34 @@ module SyntaxTree
         private
 
         def format_value(q, hash, level = 0)
+          quote = SyntaxTree::Formatter::OPTIONS[:quote]
+
           q.group do
             q.text("{")
             q.indent do
               q.group do
                 q.breakable(level == 0 ? "" : " ")
                 q.seplist(hash, nil, :each_pair) do |key, value|
-                  q.text(Format.hash_key(key))
+                  if key.match?(/^@|[-:]/)
+                    q.text("#{quote}#{Quotes.normalize(key, quote)}#{quote}:")
+                  else
+                    q.text("#{key}:")
+                  end
+
                   q.text(" ")
 
-                  if value.is_a?(Hash)
+                  case value
+                  when Hash
                     format_value(q, value, level + 1)
+                  when LiteralHashValue
+                    q.text(value.value)
+                  when StringLiteral
+                    qq = Formatter.new("")
+                    qq.with_target(q.target) { value.format(qq) }
+                  when String
+                    q.text("#{quote}#{Quotes.normalize(value, quote)}#{quote}")
                   else
-                    q.text(Format.hash_value(value))
+                    q.text(value.to_s)
                   end
                 end
               end
@@ -241,27 +258,6 @@ module SyntaxTree
             q.breakable(level == 0 ? "" : " ")
             q.text("}")
           end
-        end
-      end
-
-      def self.hash_key(key)
-        if key.match?(/^@|[-:]/)
-          quote = SyntaxTree::Formatter::OPTIONS[:quote]
-          "#{quote}#{Quotes.normalize(key, quote)}#{quote}:"
-        else
-          "#{key}:"
-        end
-      end
-
-      def self.hash_value(value)
-        case value
-        when LiteralHashValue
-          value.value
-        when String
-          quote = SyntaxTree::Formatter::OPTIONS[:quote]
-          "#{quote}#{Quotes.normalize(value, quote)}#{quote}"
-        else
-          value.to_s
         end
       end
 
@@ -405,7 +401,7 @@ module SyntaxTree
              ::Haml::AttributeParser.parse(source)
           parsed.to_h { |key, value| [key, parse_attributes(value)] }
         in [:program, [[:string_literal, *], *]]
-          source[1...-1]
+          SyntaxTree.parse(source).statements.body[0]
         else
           LiteralHashValue.new(source)
         end
