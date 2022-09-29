@@ -31,7 +31,7 @@ jobs:
     name: AutoMerge
     needs: ci
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
     steps:
     - uses: actions/github-script@v3
       with:
