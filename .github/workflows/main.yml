@@ -1,7 +1,9 @@
 name: Main
 on:
-- push
-- pull_request_target
+  push:
+    branches:
+      - main
+  pull_request: {}
 jobs:
   ci:
     strategy:
@@ -16,7 +18,7 @@ jobs:
     env:
       CI: true
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
     - uses: ruby/setup-ruby@v1
       with:
         bundler-cache: true
