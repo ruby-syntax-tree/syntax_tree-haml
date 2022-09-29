@@ -330,11 +330,15 @@ module SyntaxTree
         if node.value[:dynamic_attributes].old
           parts << PlainPart.new("%div") if parts.empty?
 
-          dynamic = parse_attributes(node.value[:dynamic_attributes].old)
-          parts << if dynamic.is_a?(LiteralHashValue)
-            PlainPart.new(dynamic.value)
+          if ::Haml::AttributeParser.available?
+            dynamic = parse_attributes(node.value[:dynamic_attributes].old)
+            parts << if dynamic.is_a?(LiteralHashValue)
+              PlainPart.new(dynamic.value)
+            else
+              HashAttributesPart.new(dynamic)
+            end
           else
-            HashAttributesPart.new(dynamic)
+            parts << PlainPart.new(node.value[:dynamic_attributes].old)
           end
         end
 

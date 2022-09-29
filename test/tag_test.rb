@@ -121,6 +121,17 @@ class TagTest < Minitest::Test
     HAML
   end
 
+  def test_long_declaration_before_text_without_parser
+    long = "a" * 80
+
+    ::Haml::AttributeParser.stub(:available?, false) do
+      assert_format("%button{ data: { current: #{long} } } foo", <<~HAML)
+        %button{ data: { current: #{long} } }
+          foo
+      HAML
+    end
+  end
+
   def test_quotes_in_strings
     assert_format("%div{title: 'escape \" quotes'}")
   end
