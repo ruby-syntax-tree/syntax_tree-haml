@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- Support for Ruby 2.7.0, not just 2.7.3
+
 ## [1.3.2] - 2022-09-19
 
 ### Added

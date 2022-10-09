@@ -24,7 +24,8 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = %w[lib]
 
-  spec.add_dependency "haml", ">= 5.2"
+  # Can't use 6.0.0 due to https://github.com/haml/haml/issues/1085
+  spec.add_dependency "haml", ">= 5.2", "!= 6.0.0"
   spec.add_dependency "prettier_print"
   spec.add_dependency "syntax_tree", ">= 2.0.1"
 

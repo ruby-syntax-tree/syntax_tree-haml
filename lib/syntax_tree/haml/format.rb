@@ -6,7 +6,7 @@ module SyntaxTree
       class Formatter < ::SyntaxTree::Formatter
         attr_reader :literal_lines, :quote
 
-        def initialize(source, ...)
+        def initialize(source, *rest)
           @literal_lines = {}
           source
             .lines
@@ -15,7 +15,7 @@ module SyntaxTree
               @literal_lines[index] = line.rstrip if line.start_with?("!")
             end
 
-          super(source, ...)
+          super(source, *rest)
         end
       end
 
