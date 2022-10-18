@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   # Can't use 6.0.0 due to https://github.com/haml/haml/issues/1085
   spec.add_dependency "haml", ">= 5.2", "!= 6.0.0"
   spec.add_dependency "prettier_print", ">= 1.0.0"
-  spec.add_dependency "syntax_tree", ">= 2.0.1"
+  spec.add_dependency "syntax_tree", ">= 4.0.0"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "minitest"
