@@ -62,11 +62,17 @@ module SyntaxTree
           q.text(node.value[:name])
 
           q.indent do
-            q.breakable(force: true)
+            q.breakable_force
+            first = true
 
-            segments = node.value[:text].strip.split("\n")
-            q.seplist(segments, -> { q.breakable(force: true) }) do |segment|
-              q.text(segment)
+            node.value[:text].each_line(chomp: true) do |line|
+              if first
+                first = false
+              else
+                q.breakable_force
+              end
+
+              q.text(line)
             end
           end
         end
@@ -78,11 +84,19 @@ module SyntaxTree
         text = node.value[:text].strip
 
         if text.include?("\n")
-          separator = -> { q.breakable(force: true) }
-
           q.indent do
-            separator.call
-            q.seplist(text.split("\n"), separator) { |segment| q.text(segment) }
+            q.breakable_force
+            first = true
+
+            text.each_line(chomp: true) do |line|
+              if first
+                first = false
+              else
+                q.breakable_force
+              end
+
+              q.text(line)
+            end
           end
         else
           q.text(" #{text}")
@@ -104,7 +118,7 @@ module SyntaxTree
       def visit_root(node)
         node.children.each do |child|
           visit(child)
-          q.breakable(force: true)
+          q.breakable_force
         end
       end
 
@@ -130,11 +144,11 @@ module SyntaxTree
 
           node.children.each do |child|
             if continuation?(node, child)
-              q.breakable(force: true)
+              q.breakable_force
               visit(child)
             else
               q.indent do
-                q.breakable(force: true)
+                q.breakable_force
                 visit(child)
               end
             end
@@ -143,7 +157,6 @@ module SyntaxTree
       end
 
       LiteralHashValue = Struct.new(:value)
-
       StringHashValue = Struct.new(:value, :quote)
 
       # When formatting a tag, there are a lot of different kinds of things that
@@ -201,6 +214,14 @@ module SyntaxTree
       end
 
       class HTMLAttributesPart
+        class Separator
+          def call(q)
+            q.fill_breakable
+          end
+        end
+
+        SEPARATOR = Separator.new
+
         attr_reader :values
 
         def initialize(raw)
@@ -214,11 +235,9 @@ module SyntaxTree
           q.group do
             q.text("(")
             q.nest(align) do
-              q.seplist(
-                values,
-                -> { q.fill_breakable },
-                :each_pair
-              ) { |key, value| q.text("#{key}=#{value}") }
+              q.seplist(values, SEPARATOR, :each_pair) do |key, value|
+                q.text("#{key}=#{value}")
+              end
             end
             q.text(")")
           end
@@ -249,7 +268,7 @@ module SyntaxTree
             q.text("{")
             q.indent do
               q.group do
-                q.breakable(level == 0 ? "" : " ")
+                level == 0 ? q.breakable_empty : q.breakable_space
                 q.seplist(hash, nil, :each_pair) do |key, value|
                   if key.match?(/^@|[-:]/)
                     q.text("#{quote}#{Quotes.normalize(key, quote)}#{quote}:")
@@ -275,7 +294,7 @@ module SyntaxTree
               end
             end
 
-            q.breakable(level == 0 ? "" : " ")
+            level == 0 ? q.breakable_empty : q.breakable_space
             q.text("}")
           end
         end
@@ -363,7 +382,7 @@ module SyntaxTree
             q.indent do
               # Split between the declaration of the tag and the contents of the
               # tag.
-              q.breakable("")
+              q.breakable_empty
 
               if node.value[:parse] && value.match?(/#[{$@]/)
                 # There's a weird case here where if the value includes
@@ -373,8 +392,7 @@ module SyntaxTree
                 q.if_break { q.text("") }.if_flat { q.text(" ") }
                 q.text(value[1...-1].gsub(/\\"/, "\""))
               elsif node.value[:parse]
-                q.text("= ")
-                q.text(value)
+                q.text("= #{value}")
               else
                 q.if_break { q.text("") }.if_flat { q.text(" ") }
                 q.text(value)
@@ -413,8 +431,8 @@ module SyntaxTree
         end
       end
 
-      # Take a source string and attempt to parse it into a set of attributes that
-      # can be used to format the source.
+      # Take a source string and attempt to parse it into a set of attributes
+      # that can be used to format the source.
       def parse_attributes(source)
         case Ripper.sexp(source)
         in [:program, [[:hash, *], *]] if parsed =
@@ -435,7 +453,7 @@ module SyntaxTree
             q.group { yield }
             q.indent do
               node.children.each do |child|
-                q.breakable(force: true)
+                q.breakable_force
                 visit(child)
               end
             end
