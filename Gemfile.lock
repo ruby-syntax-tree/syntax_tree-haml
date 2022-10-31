@@ -10,7 +10,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     docile (1.4.0)
-    haml (6.0.7)
+    haml (6.0.8)
       temple (>= 0.8.2)
       thor
       tilt
@@ -25,7 +25,7 @@ GEM
     simplecov_json_formatter (0.1.4)
     syntax_tree (4.3.0)
       prettier_print (>= 1.0.2)
-    temple (0.8.2)
+    temple (0.9.1)
     thor (1.2.1)
     tilt (2.0.11)
 
