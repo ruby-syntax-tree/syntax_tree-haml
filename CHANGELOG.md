@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [3.0.0] - 2022-11-10
+
+### Changed
+
+- Required syntax_tree version 5.0.1 or higher.
+
 ## [2.0.0] - 2022-10-18
 
 ### Added
@@ -72,7 +78,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v2.0.0...HEAD
+[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.2...v2.0.0
 [1.3.2]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.0...v1.3.1

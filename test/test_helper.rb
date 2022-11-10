@@ -15,7 +15,11 @@ PP.pp(nil, +"")
 class Minitest::Test
   private
 
-  def assert_format(source, expected = nil)
+  def assert_format(
+    source,
+    expected = nil,
+    options: ::SyntaxTree::Formatter::Options.new
+  )
     # Adding a bit of code here just to make sure the pretty-printing gets
     # executed as part of this. Not going to actually assert against it since
     # it's more of a nice-to-have and the actual format is not strict.
@@ -26,7 +30,7 @@ class Minitest::Test
     # result is what we expect.
     assert_equal(
       (expected || source).strip,
-      SyntaxTree::Haml.format(source.dup).strip
+      SyntaxTree::Haml.format(source.dup, options: options).strip
     )
   end
 end

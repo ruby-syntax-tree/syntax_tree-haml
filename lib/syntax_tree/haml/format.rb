@@ -4,9 +4,13 @@ module SyntaxTree
   module Haml
     class Format < Visitor
       class Formatter < ::SyntaxTree::Formatter
-        attr_reader :literal_lines, :quote
+        attr_reader :literal_lines
 
-        def initialize(source, *rest)
+        def initialize(
+          source,
+          *rest,
+          options: ::SyntaxTree::Formatter::Options.new
+        )
           @literal_lines = {}
           source
             .lines
@@ -15,7 +19,7 @@ module SyntaxTree
               @literal_lines[index] = line.rstrip if line.start_with?("!")
             end
 
-          super(source, *rest)
+          super(source, *rest, options: options)
         end
       end
 
