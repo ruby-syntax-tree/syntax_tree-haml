@@ -33,8 +33,8 @@ module SyntaxTree
 
     # This is the main entrypoint for the formatter. It parses the source,
     # builds a formatter, then pretty prints the result.
-    def self.format(source, maxwidth = 80)
-      formatter = Format::Formatter.new(source, +"", maxwidth)
+    def self.format(source, maxwidth = 80, options: Formatter::Options.new)
+      formatter = Format::Formatter.new(source, +"", maxwidth, options: options)
       parse(source).format(formatter)
 
       formatter.flush

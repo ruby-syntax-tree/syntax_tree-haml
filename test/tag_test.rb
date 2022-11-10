@@ -56,12 +56,11 @@ class TagTest < Minitest::Test
   end
 
   def test_dynamic_attributes_nested_hash_single_quotes
-    with_single_quotes do
-      assert_format(
-        "%div{data: { controller: \"lesson-evaluation\" }}",
-        "%div{data: { controller: 'lesson-evaluation' }}"
-      )
-    end
+    assert_format(
+      "%div{data: { controller: \"lesson-evaluation\" }}",
+      "%div{data: { controller: 'lesson-evaluation' }}",
+      options: SyntaxTree::Formatter::Options.new(quote: "'")
+    )
   end
 
   def test_dynamic_attributes_integers
@@ -84,12 +83,11 @@ class TagTest < Minitest::Test
   end
 
   def test_dynamic_attributes_strings_single_quotes
-    with_single_quotes do
-      assert_format(
-        "%section(xml:lang=\"en\" title=\"title\")",
-        "%section{'xml:lang': 'en', title: 'title'}"
-      )
-    end
+    assert_format(
+      "%section(xml:lang=\"en\" title=\"title\")",
+      "%section{'xml:lang': 'en', title: 'title'}",
+      options: SyntaxTree::Formatter::Options.new(quote: "'")
+    )
   end
 
   def test_dynamic_attributes_with_at
@@ -137,25 +135,15 @@ class TagTest < Minitest::Test
   end
 
   def test_interpolation_in_strings
-    with_single_quotes { assert_format(<<~HAML) }
+    source = <<~HAML
       %div{style: "background: center/cover url(\#{url_for(page.resource.file)})"}
     HAML
+
+    options = SyntaxTree::Formatter::Options.new(quote: "'")
+    assert_format(source, options: options)
   end
 
   def test_interpolation_in_value
     assert_format("%p <small>hello</small>\"\#{1 + 2} little pigs\"")
-  end
-
-  private
-
-  def with_single_quotes
-    quote = SyntaxTree::Formatter::OPTIONS[:quote]
-    SyntaxTree::Formatter::OPTIONS[:quote] = "'"
-
-    begin
-      yield
-    ensure
-      SyntaxTree::Formatter::OPTIONS[:quote] = quote
-    end
   end
 end
