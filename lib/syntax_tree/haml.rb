@@ -59,24 +59,26 @@ class Haml::Parser::ParseNode
   # accept a visitor in order to walk through the tree.
   def accept(visitor)
     case type
-    in :comment
+    when :comment
       visitor.visit_comment(self)
-    in :doctype
+    when :doctype
       visitor.visit_doctype(self)
-    in :filter
+    when :filter
       visitor.visit_filter(self)
-    in :haml_comment
+    when :haml_comment
       visitor.visit_haml_comment(self)
-    in :plain
+    when :plain
       visitor.visit_plain(self)
-    in :root
+    when :root
       visitor.visit_root(self)
-    in :script
+    when :script
       visitor.visit_script(self)
-    in :silent_script
+    when :silent_script
       visitor.visit_silent_script(self)
-    in :tag
+    when :tag
       visitor.visit_tag(self)
+    else
+      raise "Unknown node type: #{type}"
     end
   end
 
