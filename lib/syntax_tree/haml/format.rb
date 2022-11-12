@@ -416,11 +416,11 @@ module SyntaxTree
       def continuation?(node, child)
         return false if child.type != :silent_script
 
-        case [node.value[:keyword], child.value[:keyword]]
-        in ["case", "in" | "when" | "else"]
-          true
-        in ["if" | "unless", "elsif" | "else"]
-          true
+        case node.value[:keyword]
+        when "case"
+          %w[in when else].include?(child.value[:keyword])
+        when "if", "unless"
+          %w[elsif else].include?(child.value[:keyword])
         else
           false
         end
@@ -438,11 +438,12 @@ module SyntaxTree
       # Take a source string and attempt to parse it into a set of attributes
       # that can be used to format the source.
       def parse_attributes(source)
-        case Ripper.sexp(source)
-        in [:program, [[:hash, *], *]] if parsed =
-             ::Haml::AttributeParser.parse(source)
+        program = Ripper.sexp(source)
+        type = program && program[1][0][0]
+
+        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source))
           parsed.to_h { |key, value| [key, parse_attributes(value)] }
-        in [:program, [[:string_literal, *], *]]
+        elsif type == :string_literal
           SyntaxTree.parse(source).statements.body[0]
         else
           LiteralHashValue.new(source)
