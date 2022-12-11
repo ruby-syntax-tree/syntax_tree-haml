@@ -441,7 +441,7 @@ module SyntaxTree
         program = Ripper.sexp(source)
         type = program && program[1][0][0]
 
-        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source))
+        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source.tr("\n", ' ')))
           parsed.to_h { |key, value| [key, parse_attributes(value)] }
         elsif type == :string_literal
           SyntaxTree.parse(source).statements.body[0]

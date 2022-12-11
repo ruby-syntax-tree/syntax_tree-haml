@@ -146,4 +146,22 @@ class TagTest < Minitest::Test
   def test_interpolation_in_value
     assert_format("%p <small>hello</small>\"\#{1 + 2} little pigs\"")
   end
+
+  def test_multiline_attributes
+    assert_format(<<~HAML)
+      %ul.nav.nav-tabs.mb-4
+        %li.nav-item
+          %button.nav-link.active{
+            data: { bs_toggle: "tab", bs_target: "#file" },
+            type: "button"
+          }
+            File
+        %li.nav-item
+          %button.nav-link{
+            data: { bs_toggle: "tab", bs_target: "#video" },
+            type: "button"
+          }
+            Video
+    HAML
+  end
 end
