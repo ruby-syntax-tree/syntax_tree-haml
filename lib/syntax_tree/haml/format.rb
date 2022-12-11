@@ -438,10 +438,13 @@ module SyntaxTree
       # Take a source string and attempt to parse it into a set of attributes
       # that can be used to format the source.
       def parse_attributes(source)
+        # Haml 6 fails parsing attributes inluding newlines, so remove them.
+        source = source.tr("\n", ' ')
+
         program = Ripper.sexp(source)
         type = program && program[1][0][0]
 
-        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source.tr("\n", ' ')))
+        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source))
           parsed.to_h { |key, value| [key, parse_attributes(value)] }
         elsif type == :string_literal
           SyntaxTree.parse(source).statements.body[0]
