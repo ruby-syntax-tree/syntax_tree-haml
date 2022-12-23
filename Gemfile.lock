@@ -15,7 +15,7 @@ GEM
       thor
       tilt
     minitest (5.16.3)
-    prettier_print (1.1.0)
+    prettier_print (1.2.0)
     rake (13.0.6)
     simplecov (0.22.0)
       docile (~> 1.1)
