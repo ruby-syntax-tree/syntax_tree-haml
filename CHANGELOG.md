@@ -6,11 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [3.0.0] - 2022-11-10
+## [3.0.0] - 2022-12-23
 
 ### Changed
 
 - Required syntax_tree version 5.0.1 or higher.
+- Drop internal pattern matching in order to support Ruby implementations that don't support it.
 
 ## [2.0.0] - 2022-10-18
 
