@@ -14,7 +14,7 @@ GEM
       temple (>= 0.8.2)
       thor
       tilt
-    minitest (5.16.3)
+    minitest (5.17.0)
     prettier_print (1.2.0)
     rake (13.0.6)
     simplecov (0.22.0)
