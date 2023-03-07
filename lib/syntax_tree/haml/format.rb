@@ -377,15 +377,8 @@ module SyntaxTree
               # tag.
               q.breakable_empty
 
-              if node.value[:parse] && value.match?(/#[{$@]/)
-                # There's a weird case here where if the value includes
-                # interpolation and it's marked as { parse: true }, then we
-                # don't actually want the = prefix, and we want to remove extra
-                # escaping.
-                q.if_break { q.text("") }.if_flat { q.text(" ") }
-                q.text(value[1...-1].gsub(/\\"/, "\""))
-              elsif node.value[:parse]
-                q.text("= #{value}")
+              if node.value[:parse]
+                format_tag_value(q, value)
               else
                 q.if_break { q.text("") }.if_flat { q.text(" ") }
                 q.text(value)
@@ -398,6 +391,31 @@ module SyntaxTree
       end
 
       private
+
+      def format_tag_value(q, value)
+        program = SyntaxTree.parse(value)
+        if !program || program.statements.body.length > 1
+          return q.text("= #{value}")
+        end
+
+        statement = program.statements.body.first
+        formatter = SyntaxTree::Formatter.new(value, [], Float::INFINITY)
+        formatter.format(statement)
+        formatter.flush
+        formatted = formatter.output.join
+
+        if statement.is_a?(StringLiteral) && statement.parts.length > 1
+          # There's a weird case here where if the value includes interpolation
+          # and it's marked as { parse: true }, then we don't actually want the
+          # = prefix, and we want to remove extra escaping.
+          q.if_break { q.text("") }.if_flat { q.text(" ") }
+          q.text(formatted[1...-1].gsub(/\\"/, "\""))
+        else
+          q.text("= #{formatted}")
+        end
+      rescue Parser::ParseError
+        q.text("= #{value}")
+      end
 
       # When printing out sequences of silent scripts, sometimes subsequent nodes
       # will be continuations of previous nodes. In that case we want to dedent
