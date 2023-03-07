@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.0.1] - 2023-03-07
+
+### Changed
+
+- We now keep blank lines around in the source template. (Multiple blank lines are squished down to a single blank line.)
+- We now actually parse the Ruby code written in `%=` tags. This fixed a couple of bugs and allows us to better format the output. For example, `%p= 1+1` will now be formatted as `%p= 1 + 1`. If the output fails to parse it falls back to the previous behavior of just printing the Ruby code as-is.
+
 ## [4.0.0] - 2023-03-07
 
 ### Changed
@@ -86,7 +93,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release! 🎉
 
-[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v3.0.0...HEAD
+[unreleased]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v4.0.1...HEAD
+[4.0.1]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v4.0.0...v4.0.1
+[4.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.2...v2.0.0
 [1.3.2]: https://github.com/ruby-syntax-tree/syntax_tree-haml/compare/v1.3.1...v1.3.2

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    syntax_tree-haml (4.0.0)
+    syntax_tree-haml (4.0.1)
       haml (>= 5.2)
       prettier_print (>= 1.0.0)
       syntax_tree (>= 6.0.0)
