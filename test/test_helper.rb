@@ -10,6 +10,7 @@ require "minitest/autorun"
 # This is here because on Ruby 2.7 it's possible that a thread-local variable
 # hasn't been initialized properly which would otherwise make calls to q.pp
 # fail.
+require "pp"
 PP.pp(nil, +"")
 
 class Minitest::Test

@@ -161,7 +161,6 @@ module SyntaxTree
       end
 
       LiteralHashValue = Struct.new(:value)
-      StringHashValue = Struct.new(:value, :quote)
 
       # When formatting a tag, there are a lot of different kinds of things that
       # can be printed out. There's the tag name, the attributes, the content,
@@ -274,7 +273,7 @@ module SyntaxTree
               q.group do
                 level == 0 ? q.breakable_empty : q.breakable_space
                 q.seplist(hash, nil, :each_pair) do |key, value|
-                  if key.match?(/^@|[-:]/)
+                  if key.match?(/^@|[-:]/) && !key.match?(/^["']/)
                     q.text("#{quote}#{Quotes.normalize(key, quote)}#{quote}:")
                   else
                     q.text("#{key}:")
@@ -352,17 +351,7 @@ module SyntaxTree
         # we're going to print them out here.
         if node.value[:dynamic_attributes].old
           parts << PlainPart.new("%div") if parts.empty?
-
-          if ::Haml::AttributeParser.available?
-            dynamic = parse_attributes(node.value[:dynamic_attributes].old)
-            parts << if dynamic.is_a?(LiteralHashValue)
-              PlainPart.new(dynamic.value)
-            else
-              HashAttributesPart.new(dynamic)
-            end
-          else
-            parts << PlainPart.new(node.value[:dynamic_attributes].old)
-          end
+          parts << parse_attributes(node.value[:dynamic_attributes].old)
         end
 
         # https://haml.info/docs/yardoc/file.REFERENCE.html#object-reference-
@@ -438,16 +427,50 @@ module SyntaxTree
       # Take a source string and attempt to parse it into a set of attributes
       # that can be used to format the source.
       def parse_attributes(source)
-        program = Ripper.sexp(source)
-        type = program && program[1][0][0]
+        source = source.strip
+        source = source.start_with?("{") ? source : "{#{source}}"
 
-        if type == :hash && (parsed = ::Haml::AttributeParser.parse(source))
-          parsed.to_h { |key, value| [key, parse_attributes(value)] }
-        elsif type == :string_literal
-          SyntaxTree.parse(source).statements.body[0]
-        else
-          LiteralHashValue.new(source)
+        program = SyntaxTree.parse(source)
+        return PlainPart.new(source) if program.nil?
+
+        node = program.statements.body.first
+        return PlainPart.new(source) unless node.is_a?(HashLiteral)
+
+        HashAttributesPart.new(parse_attributes_hash(source, node))
+      rescue Parser::ParseError
+        PlainPart.new(source)
+      end
+
+      def parse_attributes_hash(source, node, level = 1)
+        node.assocs.to_h do |assoc|
+          key =
+            case assoc.key
+            when StringLiteral
+              format(assoc.key)
+            when Label
+              assoc.key.value.delete_suffix(":")
+            when DynaSymbol
+              format(assoc.key).delete_prefix(":")
+            else
+              format(assoc.key)
+            end
+
+          value =
+            case assoc.value
+            when HashLiteral
+              parse_attributes_hash(source, assoc.value, level + 1)
+            when StringLiteral
+              assoc.value
+            else
+              LiteralHashValue.new(format(assoc.value, level * 2).lstrip)
+            end
+
+          [key, value]
         end
+      end
+
+      def format(node, column = 0)
+        SyntaxTree::Formatter.format(+"", node, column)
       end
 
       def with_children(node)

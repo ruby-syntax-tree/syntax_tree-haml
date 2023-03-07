@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    syntax_tree-haml (3.0.0)
-      haml (>= 5.2, != 6.0.0)
+    syntax_tree-haml (4.0.0)
+      haml (>= 5.2)
       prettier_print (>= 1.0.0)
-      syntax_tree (>= 5.0.1)
+      syntax_tree (>= 6.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -25,16 +25,12 @@ GEM
     simplecov_json_formatter (0.1.4)
     syntax_tree (6.0.2)
       prettier_print (>= 1.2.0)
-    temple (0.9.1)
+    temple (0.10.0)
     thor (1.2.1)
-    tilt (2.0.11)
+    tilt (2.1.0)
 
 PLATFORMS
-  ruby
-  x86_64-darwin-19
-  x86_64-darwin-20
-  x86_64-darwin-21
-  x86_64-linux
+  arm64-darwin-22
 
 DEPENDENCIES
   bundler
@@ -44,4 +40,4 @@ DEPENDENCIES
   syntax_tree-haml!
 
 BUNDLED WITH
-   2.3.6
+   2.4.1

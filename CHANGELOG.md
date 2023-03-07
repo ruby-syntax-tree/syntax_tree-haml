@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.0.0] - 2023-03-07
+
+### Changed
+
+- Required syntax_tree version 6.0.0 or higher.
+- Fixed up hash attribute parser to handle multiline hashes using Syntax Tree itself.
+
 ## [3.0.0] - 2022-12-23
 
 ### Changed
