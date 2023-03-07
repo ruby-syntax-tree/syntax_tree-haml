@@ -120,7 +120,13 @@ module SyntaxTree
 
       # Visit the root node of the AST.
       def visit_root(node)
+        previous_line = nil
+
         node.children.each do |child|
+          q.breakable_force if previous_line && (child.line - previous_line) > 1
+          previous_line =
+            child.children.any? ? child.children.last.line : child.line
+
           visit(child)
           q.breakable_force
         end
