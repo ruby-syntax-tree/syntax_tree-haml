@@ -18,4 +18,12 @@ class PlainTest < Minitest::Test
   def test_unescapes
     assert_format("! hello")
   end
+
+  def test_keeps_blank_lines
+    assert_format(<<~HAML)
+      plain
+
+      plain
+    HAML
+  end
 end
