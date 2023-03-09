@@ -3,7 +3,7 @@ PATH
   specs:
     syntax_tree-haml (4.0.1)
       haml (>= 5.2)
-      prettier_print (>= 1.0.0)
+      prettier_print (>= 1.2.1)
       syntax_tree (>= 6.0.0)
 
 GEM
@@ -15,7 +15,7 @@ GEM
       thor
       tilt
     minitest (5.18.0)
-    prettier_print (1.2.0)
+    prettier_print (1.2.1)
     rake (13.0.6)
     simplecov (0.22.0)
       docile (~> 1.1)

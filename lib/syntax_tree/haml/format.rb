@@ -504,8 +504,18 @@ module SyntaxTree
           q.group do
             q.group { yield }
             q.indent do
+              previous_line = nil
+
               node.children.each do |child|
                 q.breakable_force
+
+                if previous_line && (child.line - previous_line) > 1
+                  q.breakable_force
+                end
+
+                previous_line =
+                  child.children.any? ? child.children.last.line : child.line
+
                 visit(child)
               end
             end
