@@ -26,4 +26,13 @@ class PlainTest < Minitest::Test
       plain
     HAML
   end
+
+  def test_keeps_nested_blank_lines
+    assert_format(<<~HAML)
+      %div
+        plain
+
+        plain
+    HAML
+  end
 end
