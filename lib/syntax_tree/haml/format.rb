@@ -69,15 +69,17 @@ module SyntaxTree
             q.breakable_force
             first = true
 
-            node.value[:text].each_line(chomp: true) do |line|
-              if first
-                first = false
-              else
-                q.breakable_force
-              end
+            node.value[:text]
+              .rstrip
+              .each_line(chomp: true) do |line|
+                if first
+                  first = false
+                else
+                  q.breakable_force
+                end
 
-              q.text(line)
-            end
+                q.text(line)
+              end
           end
         end
       end
@@ -124,8 +126,7 @@ module SyntaxTree
 
         node.children.each do |child|
           q.breakable_force if previous_line && (child.line - previous_line) > 1
-          previous_line =
-            child.children.any? ? child.children.last.line : child.line
+          previous_line = child.last_line
 
           visit(child)
           q.breakable_force
@@ -513,10 +514,8 @@ module SyntaxTree
                   q.breakable_force
                 end
 
-                previous_line =
-                  child.children.any? ? child.children.last.line : child.line
-
                 visit(child)
+                previous_line = child.last_line
               end
             end
           end

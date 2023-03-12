@@ -24,4 +24,27 @@ class FilterTest < Minitest::Test
         1 + 1;
     HAML
   end
+
+  def test_does_not_add_blank_lines
+    assert_format(<<~HAML)
+      %html
+        %head
+          :javascript
+            console.log("This is inline script.");
+        %body
+          = yield
+    HAML
+  end
+
+  def test_maintains_blank_lines
+    assert_format(<<~HAML)
+      %html
+        %head
+          :javascript
+            console.log("This is inline script.");
+
+        %body
+          = yield
+    HAML
+  end
 end
