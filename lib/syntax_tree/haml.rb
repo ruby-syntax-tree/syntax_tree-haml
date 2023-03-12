@@ -82,10 +82,30 @@ class Haml::Parser::ParseNode
     end
   end
 
+  # This is our entrypoint for the formatter. We effectively delegate this to
+  # accepting the Format visitor.
   def format(q)
     accept(SyntaxTree::Haml::Format.new(q))
   end
 
+  # When we're formatting a list of children, we need to know the last line a
+  # node is on. This is because the next node in the list of children should be
+  # at most 1 blank line below the last line of the previous node. We cache this
+  # because at worst it requires walking the entire tree because filter nodes
+  # can take up multiple lines.
+  def last_line
+    @last_line ||=
+      if children.any?
+        children.last.last_line
+      elsif type == :filter
+        line + value[:text].rstrip.count("\n") + 1
+      else
+        line
+      end
+  end
+
+  # This is our entrypoint for the pretty printer. We effectively delegate this
+  # to accepting the PrettyPrint visitor.
   def pretty_print(q)
     accept(SyntaxTree::Haml::PrettyPrint.new(q))
   end
