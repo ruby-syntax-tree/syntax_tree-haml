@@ -16,7 +16,7 @@ GEM
       tilt
     minitest (5.20.0)
     prettier_print (1.2.1)
-    rake (13.0.6)
+    rake (13.1.0)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
