@@ -16,7 +16,7 @@ module SyntaxTree
             .lines
             .each
             .with_index(1) do |line, index|
-              @literal_lines[index] = line.rstrip if line.start_with?("!")
+              @literal_lines[index] = line.strip if line.lstrip.start_with?("!")
             end
 
           super(source, *rest, options: options)
