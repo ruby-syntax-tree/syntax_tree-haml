@@ -22,4 +22,11 @@ class ScriptTest < Minitest::Test
   def test_unescape
     assert_format("!= hello")
   end
+
+  def test_child_unescape
+    assert_format(<<~HAML)
+      .container
+        != hello
+    HAML
+  end
 end
