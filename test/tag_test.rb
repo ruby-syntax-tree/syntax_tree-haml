@@ -135,4 +135,20 @@ class TagTest < Minitest::Test
   def test_interpolation_in_value
     assert_format("%p <small>hello</small>\"\#{1 + 2} little pigs\"")
   end
+
+  def test_preserve
+    assert_format("%p~ foo")
+  end
+
+  def test_escape_html
+    assert_format("%p&= foo")
+  end
+
+  def test_preserve_escape_html
+    assert_format("%p&~ foo")
+  end
+
+  def test_unescape
+    assert_format("%p!= foo")
+  end
 end
