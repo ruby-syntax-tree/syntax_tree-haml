@@ -16,7 +16,9 @@ module SyntaxTree
             .lines
             .each
             .with_index(1) do |line, index|
-              @literal_lines[index] = line.strip if line.lstrip.start_with?("!")
+              if (literal_line = line[/\A\s*(?:%[a-z]+)?(!.*)\s*\z/, 1])
+                @literal_lines[index] = literal_line
+              end
             end
 
           super(source, *rest, options: options)
@@ -384,8 +386,12 @@ module SyntaxTree
               # tag.
               q.breakable_empty
 
-              if node.value[:parse]
-                format_tag_value(q, value)
+              if line = q.literal_lines[node.line]
+                q.text(line)
+              elsif node.value[:parse]
+                prefix = node.value[:preserve_script] ? "~" : "="
+                prefix = "&#{prefix}" if node.value[:escape_html]
+                format_tag_value(q, prefix, value)
               else
                 q.if_break { q.text("") }.if_flat { q.text(" ") }
                 q.text(value)
@@ -399,10 +405,10 @@ module SyntaxTree
 
       private
 
-      def format_tag_value(q, value)
+      def format_tag_value(q, prefix, value)
         program = SyntaxTree.parse(value)
         if !program || program.statements.body.length > 1
-          return q.text("= #{value}")
+          return q.text("#{prefix} #{value}")
         end
 
         statement = program.statements.body.first
@@ -418,10 +424,10 @@ module SyntaxTree
           q.if_break { q.text("") }.if_flat { q.text(" ") }
           q.text(formatted[1...-1].gsub(/\\"/, "\""))
         else
-          q.text("= #{formatted}")
+          q.text("#{prefix} #{formatted}")
         end
       rescue Parser::ParseError
-        q.text("= #{value}")
+        q.text("#{prefix} #{value}")
       end
 
       # When printing out sequences of silent scripts, sometimes subsequent nodes
