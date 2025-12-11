@@ -10,7 +10,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     docile (1.4.0)
-    haml (7.0.2)
+    haml (7.1.0)
       temple (>= 0.8.2)
       thor
       tilt
