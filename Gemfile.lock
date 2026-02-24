@@ -10,14 +10,16 @@ GEM
   remote: https://rubygems.org/
   specs:
     docile (1.4.0)
+    drb (2.2.3)
     haml (7.2.0)
       temple (>= 0.8.2)
       thor
       tilt
-    minitest (6.0.1)
+    minitest (6.0.2)
+      drb (~> 2.0)
       prism (~> 1.5)
     prettier_print (1.2.1)
-    prism (1.7.0)
+    prism (1.9.0)
     rake (13.3.1)
     simplecov (0.22.0)
       docile (~> 1.1)
